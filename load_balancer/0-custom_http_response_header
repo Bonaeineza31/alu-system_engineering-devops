@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# your script should contain "add_header X-Served-By $hostname;" or else fail. DUMB Intranet.
+sudo apt-get update -y;
+sudo apt-get install -y nginx;
+sudo apt-get install -y ufw;
+
+sudo ufw enable;
+sudo ufw allow 'Nginx HTTP';
+sudo ufw allow 'OpenSSH';
+
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html;
+sudo cp server {
+    listen 80 default_server;
+    server_name _;
+    add_header X-Served-By $hostname;
+
+    error_page 404 /404.html;
+    location /404.html {
+        root /var/www/html/;
+    }
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=dQw4w9WgXcQ;
+    }
+
+    location = / {
+        return 200 "Holberton School\n";
+    }
+} /etc/nginx/sites-enabled/default;
+
+sudo service nginx restart;
