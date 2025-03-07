@@ -20,7 +20,7 @@ sudo service nginx start
 sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bckp
 
 # Create custom 404 error page
-echo -e "Ceci n'est pas une page" > /var/www/html/404.html
+echo -e "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
 
 # Adding the custom 404 page configuration to Nginx
 echo -e "\nConfiguring custom 404 page...\n"
