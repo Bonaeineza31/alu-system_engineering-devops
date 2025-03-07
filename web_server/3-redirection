@@ -1,36 +1,33 @@
 #!/usr/bin/env bash
-# Configures a new ubuntu machine by installing
-# Nginx where it should be listening on port 80
-# Serve a page that would return a Hello World string
-#
-
+# Configures a new Ubuntu machine by installing Nginx
+# and setting up a 301 redirect for /redirect_me.
 
 echo -e "Updating and installing Nginx.\n"
 sudo apt-get update -y -qq && \
-         sudo apt-get install nginx -y
+    sudo apt-get install nginx -y
+sudo apt-get install -y ufw
 
 echo -e "\nSetting up some minor stuff.\n"
 
-# starting nginx service
-sudo service nginx start
-
-# allowing nginx on firewall
+# Enable firewall and allow Nginx HTTP
+sudo ufw enable
 sudo ufw allow 'Nginx HTTP'
 
-# Give the user ownership to website files for easy editing
-sudo chown -R "$USER":"$USER" /var/www/html
-sudo chmod -R 755 /var/www
+# Starting nginx service
+sudo service nginx start
 
-# Backup default index
-cp /var/www/html/index.html /var/www/html/index.html.bckp
+# Backup default nginx configuration
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bckp
 
-# Creating new index
-echo -e "Holberton School" > /var/www/html/index.nginx-debian.html
+# Adding the redirection rule for /redirect_me
+echo -e "\nConfiguring redirection from /redirect_me...\n"
+sudo sed -i "/server_name _;/a \\
+    location /redirect_me { \n\
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; \n\
+    }" /etc/nginx/sites-available/default
 
-# Setting up /redirect_me to a youtube video
-sudo sed -i '24i\       rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
-
-# Restarting nginx
+# Restart Nginx to apply changes
 sudo service nginx restart
 
-echo -e "\nCompleted.\n"
+echo -e "\nRedirection setup completed.\n"
+
