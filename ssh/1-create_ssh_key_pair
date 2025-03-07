@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #bash project 2
 
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/school -N "betty"
