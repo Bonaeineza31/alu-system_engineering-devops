@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 #bash script project 1
 
-ssh -i ~/.ssh/school ubuntu@server01
+ssh -i ~/.ssh/school ubuntu@184.73.119.129
