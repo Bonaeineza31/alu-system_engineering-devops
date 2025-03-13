@@ -1,14 +1,27 @@
 #!/usr/bin/env bash
-# your script should contain "add_header X-Served-By $hostname;" or else fail. DUMB Intranet.
-sudo apt-get update -y;
-sudo apt-get install -y nginx;
-sudo apt-get install -y ufw;
+# Script to configure Nginx with custom header
 
-sudo ufw enable;
-sudo ufw allow 'Nginx HTTP';
-sudo ufw allow 'OpenSSH';
+# Update and install required packages
+sudo apt-get update -y
+sudo apt-get install -y nginx
+sudo apt-get install -y ufw
 
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html;
-sudo cp ./nginx.conf /etc/nginx/sites-enabled/default;
+# Configure firewall
+sudo ufw enable
+sudo ufw allow 'Nginx HTTP'
+sudo ufw allow 'OpenSSH'
 
-sudo service nginx restart;
+# Set up custom 404 page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+
+# Add custom header to the server configuration
+sudo sed -i '/server_name _;/a \        add_header X-Served-By $hostname;' /etc/nginx/sites-available/default
+
+# Create symbolic link if it doesn't exist
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Test configuration
+sudo nginx -t
+
+# Restart Nginx
+sudo service nginx restart
