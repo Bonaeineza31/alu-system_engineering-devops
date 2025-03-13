@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# your script should contain "add_header X-Served-By $hostname;" or else fail. DUMB Intranet.
+sudo apt-get update -y;
+sudo apt-get install -y nginx;
+sudo apt-get install -y ufw;
+
+sudo ufw enable;
+sudo ufw allow 'Nginx HTTP';
+sudo ufw allow 'OpenSSH';
+
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html;
+sudo cp ./nginx.conf /etc/nginx/sites-enabled/default;
+
+sudo service nginx restart;
