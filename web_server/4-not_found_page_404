@@ -1,38 +1,39 @@
 #!/usr/bin/env bash
-# Configures a new Ubuntu machine by installing Nginx
-# and setting up a custom 404 error page.
+# Configures a new ubuntu machine by installing
+# Nginx where it should be listening on port 80
+# Serve a page that would return a Hello World string
+#
 
 echo -e "Updating and installing Nginx.\n"
 sudo apt-get update -y -qq && \
-    sudo apt-get install nginx -y
-sudo apt-get install -y ufw
+	 sudo apt-get install nginx -y
 
 echo -e "\nSetting up some minor stuff.\n"
 
-# Enable firewall and allow Nginx HTTP
-sudo ufw enable
-sudo ufw allow 'Nginx HTTP'
-
-# Starting nginx service
+# starting nginx service
 sudo service nginx start
 
-# Backup default nginx configuration
-sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bckp
+# allowing nginx on firewall
+sudo ufw allow 'Nginx HTTP'
 
-# Create custom 404 error page
-echo -e "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+# Give the user ownership to website files for easy editing
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
 
-# Adding the custom 404 page configuration to Nginx
-echo -e "\nConfiguring custom 404 page...\n"
-sudo sed -i "/server_name bonaeineza31.tech;/a \\
-    error_page 404 /404.html; \n\
-    location = /404.html { \n\
-        root /var/www/html; \n\
-        internal; \n\
-    }" /etc/nginx/sites-available/default
+# Backup default index
+cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
 
-# Restart Nginx to apply changes
+# Creating new index
+echo -e "Hello World!" > /var/www/html/index.nginx-debian.html
+
+# Setting up /redirect_me to a youtube video
+sudo sed -i '24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+
+# Set up a 404 page
+echo "Ceci n'est pas une page" >> /var/www/html/error_404.html
+sudo sed -i '25i\	error_page 404 /error_404.html;' /etc/nginx/sites-available/default
+
+# Restarting nginx
 sudo service nginx restart
 
-echo -e "\nCustom 404 page setup completed.\n"
-
+echo -e "\nCompleted.\n"
