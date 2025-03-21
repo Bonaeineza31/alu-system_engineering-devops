@@ -1,0 +1,5 @@
+#bash script project 3
+
+Host *
+    IdentityFile ~/.ssh/school
+    PasswordAuthentication no

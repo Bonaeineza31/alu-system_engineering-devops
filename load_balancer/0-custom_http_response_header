@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Script to configure Nginx with custom header
+
+# Update and install required packages
+sudo apt-get update -y
+sudo apt-get install -y nginx
+sudo apt-get install -y ufw
+
+# Configure firewall
+sudo ufw enable
+sudo ufw allow 'Nginx HTTP'
+sudo ufw allow 'OpenSSH'
+
+# Set up custom 404 page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+
+# Add custom header to the server configuration
+sudo sed -i '/server_name _;/a \        add_header X-Served-By $hostname;' /etc/nginx/sites-available/default
+
+# Create symbolic link if it doesn't exist
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Test configuration
+sudo nginx -t
+
+# Restart Nginx
+sudo service nginx restart

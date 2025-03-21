@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Configures a new Ubuntu machine by installing Nginx
+# and setting up a 301 redirect for /redirect_me.
+
+echo -e "Updating and installing Nginx.\n"
+sudo apt-get update -y -qq && \
+    sudo apt-get install nginx -y
+sudo apt-get install -y ufw
+
+echo -e "\nSetting up some minor stuff.\n"
+
+# Enable firewall and allow Nginx HTTP
+sudo ufw enable
+sudo ufw allow 'Nginx HTTP'
+
+# Starting nginx service
+sudo service nginx start
+
+# Backup default nginx configuration
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bckp
+
+# Adding the redirection rule for /redirect_me
+echo -e "\nConfiguring redirection from /redirect_me...\n"
+sudo sed -i "/server_name /a \\
+    location /redirect_me { \n\
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; \n\
+    }" /etc/nginx/sites-available/default
+
+# Test the Nginx configuration for errors
+sudo nginx -t
+
+# Restart Nginx to apply changes
+sudo service nginx restart
+
+echo -e "\nRedirection setup completed.\n"
+
