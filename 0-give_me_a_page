@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Fix Apache to return a page containing "Hello Holberton"
+service apache2 start
+echo "Hello Holberton" > /var/www/html/index.html
