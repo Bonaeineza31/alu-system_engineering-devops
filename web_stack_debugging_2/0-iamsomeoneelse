@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#task1
+
+username=$1
+
+if [[ -z "$username" ]]; then
+  whoami
+else
+  sudo -u "$username" whoami
+fi
